@@ -27,7 +27,11 @@ setup(name='collective.storedtranslations',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          'plone.registry',
           'setuptools',
+          'zope.component',
+          'zope.i18n',
+          'zope.interface',
       ],
       extras_require = {
           'test': [
