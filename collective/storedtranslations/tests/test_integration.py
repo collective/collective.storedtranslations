@@ -7,12 +7,13 @@ from zope.component import getUtility
 from zope.i18n import translate
 import unittest
 
+from collective.storedtranslations.registrycatalog import REGISTRY_BASE
 from collective.storedtranslations.registrycatalog import RegistryCatalog
 from collective.storedtranslations.testing import INTEGRATION_TESTING
 from collective.storedtranslations.testing import EXTRA_INTEGRATION_TESTING
 
 
-class IntegrationTestCase(unittest.TestCase):
+class CatalogTestCase(unittest.TestCase):
     # This does NOT have the testfixture profile installed.
     layer = INTEGRATION_TESTING
 
@@ -28,6 +29,27 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertEqual(
             cat.getIdentifier(),
             'collective.storedtranslations.collective.storedtranslations.de')
+
+    def test_getMessage(self):
+        cat = RegistryCatalog('plone', 'nl')
+        self.assertEqual(cat.getMessage('Hello world'), None)
+        self.assertEqual(cat.getMessage('Hello world', 'foobar'), 'foobar')
+        self.registry[REGISTRY_BASE] = \
+            {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
+        self.assertEqual(cat.getMessage('Hello world'), 'Hallo wereld')
+
+    def test_queryMessage(self):
+        cat = RegistryCatalog('plone', 'nl')
+        self.assertEqual(cat.queryMessage('Hello world'), None)
+        self.assertEqual(cat.queryMessage('Hello world', 'foobar'), 'foobar')
+        self.registry[REGISTRY_BASE] = \
+            {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
+        self.assertEqual(cat.queryMessage('Hello world'), 'Hallo wereld')
+
+    def test_reload(self):
+        # This does not do anything, but should not give problems.
+        cat = RegistryCatalog('plone', 'nl')
+        self.assertEqual(cat.reload(), None)
 
 
 class ExtraIntegrationTestCase(unittest.TestCase):
