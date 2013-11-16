@@ -8,9 +8,13 @@ DOMAINS = os.environ.get(DOMAINS_KEY, ['plone'])
 LANGUAGES = config.ALLOWED_LANGUAGES or ['nl', 'de']
 
 
-def initialize(context):
-    """Initializer called when used as a Zope 2 product."""
-    for domain in DOMAINS:
-        for lang in LANGUAGES:
+def register_catalogs(domains, languages):
+    for domain in domains:
+        for lang in languages:
             catalog = RegistryCatalog(domain, lang)
             handler([catalog], domain)
+
+
+def initialize(context):
+    """Initializer called when used as a Zope 2 product."""
+    register_catalogs(DOMAINS, LANGUAGES)

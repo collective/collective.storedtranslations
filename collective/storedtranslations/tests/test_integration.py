@@ -11,6 +11,7 @@ from collective.storedtranslations.registrycatalog import REGISTRY_BASE
 from collective.storedtranslations.registrycatalog import RegistryCatalog
 from collective.storedtranslations.testing import INTEGRATION_TESTING
 from collective.storedtranslations.testing import EXTRA_INTEGRATION_TESTING
+from zope.i18n.zcml import handler
 
 
 class CatalogTestCase(unittest.TestCase):
@@ -19,37 +20,98 @@ class CatalogTestCase(unittest.TestCase):
 
     def setUp(self):
         self.registry = getUtility(IRegistry)
+        # Create a catalog for domain plone and language Dutch
+        # (nl == The Netherlands).
+        self.cat = RegistryCatalog('plone', 'nl')
+        # Register catalog in the same way as is done on zope startup.
+        handler([self.cat], 'plone')
 
     def test_getIdentifier(self):
-        cat = RegistryCatalog('plone', 'nl')
         self.assertEqual(
-            cat.getIdentifier(),
+            self.cat.getIdentifier(),
             'collective.storedtranslations.plone.nl')
-        cat = RegistryCatalog('collective.storedtranslations', 'de')
+        cat_de = RegistryCatalog('collective.storedtranslations', 'de')
         self.assertEqual(
-            cat.getIdentifier(),
+            cat_de.getIdentifier(),
             'collective.storedtranslations.collective.storedtranslations.de')
 
     def test_getMessage(self):
-        cat = RegistryCatalog('plone', 'nl')
-        self.assertEqual(cat.getMessage('Hello world'), None)
-        self.assertEqual(cat.getMessage('Hello world', 'foobar'), 'foobar')
+        self.assertEqual(self.cat.getMessage('Hello world'), None)
+        self.assertEqual(self.cat.getMessage('Hello world', 'foobar'), 'foobar')
         self.registry[REGISTRY_BASE] = \
             {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
-        self.assertEqual(cat.getMessage('Hello world'), 'Hallo wereld')
+        self.assertEqual(self.cat.getMessage('Hello world'), 'Hallo wereld')
+
+        # Try other language and domain.  This should not find the
+        # existing translation.
+        cat_de = RegistryCatalog('plone', 'de')
+        self.assertEqual(cat_de.getMessage('Hello world'), None)
+        cat_other = RegistryCatalog('other_domain', 'nl')
+        self.assertEqual(cat_other.getMessage('Hello world'), None)
 
     def test_queryMessage(self):
-        cat = RegistryCatalog('plone', 'nl')
-        self.assertEqual(cat.queryMessage('Hello world'), None)
-        self.assertEqual(cat.queryMessage('Hello world', 'foobar'), 'foobar')
+        self.assertEqual(self.cat.queryMessage('Hello world'), None)
+        self.assertEqual(self.cat.queryMessage('Hello world', 'foobar'), 'foobar')
         self.registry[REGISTRY_BASE] = \
             {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
-        self.assertEqual(cat.queryMessage('Hello world'), 'Hallo wereld')
+        self.assertEqual(self.cat.queryMessage('Hello world'), 'Hallo wereld')
+
+        # Try other language and domain.  This should not find the
+        # existing translation.
+        cat_de = RegistryCatalog('plone', 'de')
+        self.assertEqual(cat_de.getMessage('Hello world'), None)
+        cat_other = RegistryCatalog('other_domain', 'nl')
+        self.assertEqual(cat_other.getMessage('Hello world'), None)
 
     def test_reload(self):
         # This does not do anything, but should not give problems.
-        cat = RegistryCatalog('plone', 'nl')
-        self.assertEqual(cat.reload(), None)
+        self.assertEqual(self.cat.reload(), None)
+
+    def test_translate(self):
+        # For the translate call to work, we must register the catalog
+        # in the same way as is done on zope startup.  We register
+        # some other catalogs as well.
+        cat_de = RegistryCatalog('plone', 'de')
+        cat_fr = RegistryCatalog('plone', 'fr')
+        handler([cat_de, self.cat, cat_fr], 'plone')
+        # For some reason, if the next two lines are used, the
+        # IRegistry utility is not found in the registrycatalog.
+        # Seems to work fine in practice.  Weird.
+        #
+        #cat_other = RegistryCatalog('other_domain', 'nl')
+        #handler([cat_other], 'other_domain')
+
+        # No translation is found, so the default is returned.
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='nl'),
+            'Hello world')
+
+        # Add translations.
+        self.registry[REGISTRY_BASE] = \
+            {u'plone':
+                {u'de': {u'Hello world': u'Hallo Welt'},
+                 u'nl': {u'Hello moon': u'Hallo maan',
+                         u'Hello world': u'Hallo wereld',
+                         u'Goodbye world': u'Dag wereld'},
+                 u'fr': {u'Hello world': u'Allô monde'}},
+             u'other_domain':
+                {u'nl': {u'Hello world': u'Hallo andere wereld'}},
+             }
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='nl'),
+            'Hallo wereld')
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='de'),
+            'Hallo Welt')
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='fr'),
+            u'Allô monde')
+        # If adding the registry catalog for the other domain is done
+        # without bad side effects, the translate call should work,
+        # but for the moment it returns the default.
+        self.assertEqual(
+            translate('Hello world', 'other_domain', target_language='nl'),
+            'Hello world')
 
 
 class ExtraIntegrationTestCase(unittest.TestCase):
