@@ -6,13 +6,15 @@ setup(name='collective.storedtranslations',
       version=version,
       description="Store translations in the registry",
       long_description=(open("README.rst").read() + "\n" +
-                        open("CHANGES.rst")).read(),
+                        open("CHANGES.rst").read()),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
           "Framework :: Plone",
+          "Framework :: Plone :: 4.2",
           "Framework :: Plone :: 4.3",
           "Programming Language :: Python",
+          "Programming Language :: Python :: 2.6",
           "Programming Language :: Python :: 2.7",
           ],
       keywords='i18n translations po plone',
