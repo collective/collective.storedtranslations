@@ -14,6 +14,5 @@
       description="Installs the collective.storedtranslations package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-  <!-- -*- extra stuff goes here -*- -->
   
 </configure>

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from plone.app.registry.interfaces import IRegistry
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
+from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.i18n import translate
 import unittest
 
+from collective.storedtranslations.registrycatalog import RegistryCatalog
 from collective.storedtranslations.testing import INTEGRATION_TESTING
 from collective.storedtranslations.testing import EXTRA_INTEGRATION_TESTING
 
@@ -17,6 +18,16 @@ class IntegrationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.registry = getUtility(IRegistry)
+
+    def test_getIdentifier(self):
+        cat = RegistryCatalog('plone', 'nl')
+        self.assertEqual(
+            cat.getIdentifier(),
+            'collective.storedtranslations.plone.nl')
+        cat = RegistryCatalog('collective.storedtranslations', 'de')
+        self.assertEqual(
+            cat.getIdentifier(),
+            'collective.storedtranslations.collective.storedtranslations.de')
 
 
 class ExtraIntegrationTestCase(unittest.TestCase):

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <record name="collective.storedtranslations.translationdomains">
+    <field type="plone.registry.field.Dict">
+      <title i18n:translate="">Classifier Themes</title>
+      <key_type type="plone.registry.field.TextLine">
+        <title i18n:translate="">Domain</title>
+      </key_type>
+      <value_type type="plone.registry.field.Dict">
+        <title i18n:translate="">Language</title>
+        <key_type type="plone.registry.field.TextLine">
+          <title i18n:translate="">Language Code</title>
+        </key_type>
+        <value_type type="plone.registry.field.Dict">
+          <title i18n:translate="">Message</title>
+          <key_type type="plone.registry.field.TextLine">
+            <title i18n:translate="">Message ID</title>
+          </key_type>
+          <value_type type="plone.registry.field.TextLine">
+            <title i18n:translate="">Message String</title>
+          </value_type>
+        </value_type>
+      </value_type>
+    </field>
+    <value purge="false" />
+  </record>
+</registry>
