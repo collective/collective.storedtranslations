@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from collective.storedtranslations import initialize
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
@@ -27,12 +28,14 @@ class FixtureWithExtraProfile(PloneSandboxLayer):
         # Load ZCML
         import collective.storedtranslations
         self.loadZCML(package=collective.storedtranslations)
+        # Apparently, the initialize function is not applied.  We
+        # require it because it registers our catalogs.
+        initialize(None)
 
     def setUpPloneSite(self, portal):
         # Install into Plone site using portal_setup
-        self.applyProfile(portal, 'plone.app.dexterity:default')
         self.applyProfile(portal, 'collective.storedtranslations:default')
-        #self.applyProfile(portal, 'collective.storedtranslations:testfixture')
+        self.applyProfile(portal, 'collective.storedtranslations:testfixture')
 
 
 FIXTURE = Fixture()

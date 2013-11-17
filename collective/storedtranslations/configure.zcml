@@ -14,5 +14,13 @@
       description="Installs the collective.storedtranslations package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+
+  <genericsetup:registerProfile
+      name="testfixture"
+      title="collective.storedtranslations testfixture"
+      directory="profiles/testfixture"
+      description="Testdata for the collective.storedtranslations package"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
   
 </configure>

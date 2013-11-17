@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.i18n import translate
@@ -118,6 +116,8 @@ class ExtraIntegrationTestCase(unittest.TestCase):
     # This has the testfixture profile installed.
     layer = EXTRA_INTEGRATION_TESTING
 
-    def setUp(self):
-        self.portal = self.layer['portal']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+    def test_translate(self):
+        # We have a translation for Dutch in the testfixture.
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='nl'),
+            'Hallo wereld')

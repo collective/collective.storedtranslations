@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          i18n:domain="plone">
+  <record name="collective.storedtranslations.translationdomains">
+    <value>
+      <element key="plone">
+        <element key="nl">
+          <element key="Hello world">Hallo wereld</element>
+          <element key="Awesome translation">Fantastische vertaling</element>
+        </element>
+      </element>
+    </value>
+  </record>
+</registry>
