@@ -11,7 +11,6 @@ setup(name='collective.storedtranslations',
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
           "Framework :: Plone",
-          "Framework :: Plone :: 4.2",
           "Framework :: Plone :: 4.3",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.6",

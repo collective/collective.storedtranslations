@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collective.storedtranslations import initialize
+from collective.storedtranslations import register_catalogs
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
@@ -28,9 +29,13 @@ class FixtureWithExtraProfile(PloneSandboxLayer):
         # Load ZCML
         import collective.storedtranslations
         self.loadZCML(package=collective.storedtranslations)
-        # Apparently, the initialize function is not applied.  We
-        # require it because it registers our catalogs.
+        # In the initialize function our catalogs are registered, but
+        # apparently this is not applied during test setup.  We
+        # require it though, so we call it manually.
         initialize(None)
+        # Let's explicitly register some domains and languages.
+        register_catalogs(['plone', 'collective.storedtranslations'],
+                          ['nl', 'de'])
 
     def setUpPloneSite(self, portal):
         # Install into Plone site using portal_setup

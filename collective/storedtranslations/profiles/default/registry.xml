@@ -3,7 +3,7 @@
           i18n:domain="plone">
   <record name="collective.storedtranslations.translationdomains">
     <field type="plone.registry.field.Dict">
-      <title i18n:translate="">Classifier Themes</title>
+      <title i18n:translate="">Translation domains</title>
       <key_type type="plone.registry.field.TextLine">
         <title i18n:translate="">Domain</title>
       </key_type>

@@ -8,6 +8,21 @@
           <element key="Hello world">Hallo wereld</element>
           <element key="Awesome translation">Fantastische vertaling</element>
         </element>
+        <element key="de">
+          <element key="Hello world">Hallo Welt</element>
+        </element>
+        <element key="fy">
+          <element key="Hello world">Hallo wrâld</element>
+        </element>
+      </element>
+      <element key="collective.storedtranslations">
+        <element key="nl">
+          <element key="Hello world">Hallo vertaalde wereld</element>
+          <element key="Awesome translation">Fantastisch vertaaldee vertaling</element>
+        </element>
+        <element key="de">
+          <element key="Hello world">Hallo übersetzte Welt</element>
+        </element>
       </element>
     </value>
   </record>

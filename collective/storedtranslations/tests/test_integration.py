@@ -121,3 +121,26 @@ class ExtraIntegrationTestCase(unittest.TestCase):
         self.assertEqual(
             translate('Hello world', 'plone', target_language='nl'),
             'Hallo wereld')
+        # We have one for German too.
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='de'),
+            'Hallo Welt')
+        # We have one for Frysian, but this language is not registered
+        # in the zope_i18n_allowed_languages variable.
+        self.assertEqual(
+            translate('Hello world', 'plone', target_language='fr'),
+            'Hello world')
+        # Try a different domain.  We have a Dutch and a German
+        # translation, but not a Frysian.
+        self.assertEqual(
+            translate('Hello world', 'collective.storedtranslations',
+                      target_language='nl'),
+            u'Hallo vertaalde wereld')
+        self.assertEqual(
+            translate('Hello world', 'collective.storedtranslations',
+                      target_language='de'),
+            u'Hallo \xfcbersetzte Welt')
+        self.assertEqual(
+            translate('Hello world', 'collective.storedtranslations',
+                      target_language='fy'),
+            u'Hello world')
