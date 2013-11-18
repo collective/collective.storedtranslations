@@ -2,9 +2,20 @@
 
 from collective.storedtranslations import initialize
 from collective.storedtranslations import register_catalogs
+from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
+
+
+class UninstalledFixture(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE,)
+
+    def setUpZope(self, app, configurationContext):
+        # Load ZCML
+        import collective.storedtranslations
+        self.loadZCML(package=collective.storedtranslations)
 
 
 class Fixture(PloneSandboxLayer):
@@ -44,6 +55,7 @@ class FixtureWithExtraProfile(PloneSandboxLayer):
 
 
 FIXTURE = Fixture()
+UNINSTALLED_FIXTURE = UninstalledFixture()
 FIXTURE_WITH_EXTRA_PROFILE = FixtureWithExtraProfile()
 INTEGRATION_TESTING = IntegrationTesting(
     bases=(FIXTURE,),
@@ -52,4 +64,8 @@ INTEGRATION_TESTING = IntegrationTesting(
 EXTRA_INTEGRATION_TESTING = IntegrationTesting(
     bases=(FIXTURE_WITH_EXTRA_PROFILE,),
     name='collective.storedtranslations:ExtraIntegration',
+)
+UNINSTALLED_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(UNINSTALLED_FIXTURE,),
+    name='collective.storedtranslations:UninstalledFunctional',
 )

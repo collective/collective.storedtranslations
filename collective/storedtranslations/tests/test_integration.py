@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
+from plone.app.testing.interfaces import SITE_OWNER_NAME
+from plone.app.testing.interfaces import SITE_OWNER_PASSWORD
 from plone.registry.interfaces import IRegistry
+from plone.testing.z2 import Browser
 from zope.component import getUtility
 from zope.i18n import translate
 import unittest
@@ -9,7 +14,36 @@ from collective.storedtranslations.registrycatalog import REGISTRY_BASE
 from collective.storedtranslations.registrycatalog import StoredCatalog
 from collective.storedtranslations.testing import INTEGRATION_TESTING
 from collective.storedtranslations.testing import EXTRA_INTEGRATION_TESTING
+from collective.storedtranslations.testing import UNINSTALLED_FUNCTIONAL_TESTING
 from zope.i18n.zcml import handler
+
+
+class UninstalledTestCase(unittest.TestCase):
+    # This does NOT have our profiles installed.
+    layer = UNINSTALLED_FUNCTIONAL_TESTING
+
+    def test_qi(self):
+        portal = self.layer['portal']
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        portal.prefs_install_products_form()
+        portal.prefs_install_products_form()
+
+    def test_view_qi(self):
+        # There is something funky and disruptive going on when
+        # viewing the add-ons control panel.  Let's check it by
+        # visiting it two times, because the first time seems to go
+        # fine always.
+        app = self.layer['app']
+        portal = self.layer['portal']
+        browser = Browser(app)
+        browser.handleErrors = False
+        portal_url = portal.absolute_url()
+        browser.open(portal_url + '/login')
+        browser.getControl('Login Name').value = SITE_OWNER_NAME
+        browser.getControl('Password').value = SITE_OWNER_PASSWORD
+        browser.getControl('Log in').click()
+        browser.open(portal_url + '/prefs_install_products_form')
+        browser.open(portal_url + '/prefs_install_products_form')
 
 
 class CatalogTestCase(unittest.TestCase):
