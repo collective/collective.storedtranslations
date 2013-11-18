@@ -21,8 +21,6 @@ class StoredCatalog(object):
         if registry is None:
             print "no registry"
             return default
-        if True:
-            return default
         try:
             enabled = registry[SETTINGS_IFACE + '.use_stored_translations']
         except KeyError:

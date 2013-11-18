@@ -61,11 +61,11 @@ class CatalogTestCase(unittest.TestCase):
     def test_getIdentifier(self):
         self.assertEqual(
             self.cat.getIdentifier(),
-            'collective.storedtranslations.plone.nl')
+            'collective.storedtranslations.stored.plone.nl')
         cat_de = StoredCatalog('collective.storedtranslations', 'de')
         self.assertEqual(
             cat_de.getIdentifier(),
-            'collective.storedtranslations.collective.storedtranslations.de')
+            'collective.storedtranslations.stored.collective.storedtranslations.de')
 
     def test_getMessage(self):
         self.assertEqual(self.cat.getMessage('Hello world'), None)

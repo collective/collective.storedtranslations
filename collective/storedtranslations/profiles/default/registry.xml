@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
           i18n:domain="plone">
+  <records interface="collective.storedtranslations.interfaces.IStoredTranslationsSettings" />
   <record name="collective.storedtranslations.translationdomains">
     <field type="plone.registry.field.Dict">
       <title i18n:translate="">Translation domains</title>
