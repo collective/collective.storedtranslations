@@ -1,7 +1,7 @@
 import os
 from zope.i18n.zcml import handler
 from zope.i18n.zcml import config
-from collective.storedtranslations.registrycatalog import RegistryCatalog
+from collective.storedtranslations.registrycatalog import StoredCatalog
 
 LANGUAGES = config.ALLOWED_LANGUAGES
 DOMAINS_KEY = 'collective_storedtranslations_domains'
@@ -15,7 +15,7 @@ def register_catalogs(domains, languages):
         return
     for domain in domains:
         for lang in languages:
-            catalog = RegistryCatalog(domain, lang)
+            catalog = StoredCatalog(domain, lang)
             handler([catalog], domain)
 
 

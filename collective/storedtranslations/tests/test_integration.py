@@ -6,7 +6,7 @@ from zope.i18n import translate
 import unittest
 
 from collective.storedtranslations.registrycatalog import REGISTRY_BASE
-from collective.storedtranslations.registrycatalog import RegistryCatalog
+from collective.storedtranslations.registrycatalog import StoredCatalog
 from collective.storedtranslations.testing import INTEGRATION_TESTING
 from collective.storedtranslations.testing import EXTRA_INTEGRATION_TESTING
 from zope.i18n.zcml import handler
@@ -20,7 +20,7 @@ class CatalogTestCase(unittest.TestCase):
         self.registry = getUtility(IRegistry)
         # Create a catalog for domain plone and language Dutch
         # (nl == The Netherlands).
-        self.cat = RegistryCatalog('plone', 'nl')
+        self.cat = StoredCatalog('plone', 'nl')
         # Register catalog in the same way as is done on zope startup.
         handler([self.cat], 'plone')
 
@@ -28,7 +28,7 @@ class CatalogTestCase(unittest.TestCase):
         self.assertEqual(
             self.cat.getIdentifier(),
             'collective.storedtranslations.plone.nl')
-        cat_de = RegistryCatalog('collective.storedtranslations', 'de')
+        cat_de = StoredCatalog('collective.storedtranslations', 'de')
         self.assertEqual(
             cat_de.getIdentifier(),
             'collective.storedtranslations.collective.storedtranslations.de')
@@ -42,9 +42,9 @@ class CatalogTestCase(unittest.TestCase):
 
         # Try other language and domain.  This should not find the
         # existing translation.
-        cat_de = RegistryCatalog('plone', 'de')
+        cat_de = StoredCatalog('plone', 'de')
         self.assertEqual(cat_de.getMessage('Hello world'), None)
-        cat_other = RegistryCatalog('other_domain', 'nl')
+        cat_other = StoredCatalog('other_domain', 'nl')
         self.assertEqual(cat_other.getMessage('Hello world'), None)
 
     def test_queryMessage(self):
@@ -56,9 +56,9 @@ class CatalogTestCase(unittest.TestCase):
 
         # Try other language and domain.  This should not find the
         # existing translation.
-        cat_de = RegistryCatalog('plone', 'de')
+        cat_de = StoredCatalog('plone', 'de')
         self.assertEqual(cat_de.getMessage('Hello world'), None)
-        cat_other = RegistryCatalog('other_domain', 'nl')
+        cat_other = StoredCatalog('other_domain', 'nl')
         self.assertEqual(cat_other.getMessage('Hello world'), None)
 
     def test_reload(self):
@@ -69,14 +69,14 @@ class CatalogTestCase(unittest.TestCase):
         # For the translate call to work, we must register the catalog
         # in the same way as is done on zope startup.  We register
         # some other catalogs as well.
-        cat_de = RegistryCatalog('plone', 'de')
-        cat_fr = RegistryCatalog('plone', 'fr')
+        cat_de = StoredCatalog('plone', 'de')
+        cat_fr = StoredCatalog('plone', 'fr')
         handler([cat_de, self.cat, cat_fr], 'plone')
         # For some reason, if the next two lines are used, the
         # IRegistry utility is not found in the registrycatalog.
         # Seems to work fine in practice.  Weird.
         #
-        #cat_other = RegistryCatalog('other_domain', 'nl')
+        #cat_other = StoredCatalog('other_domain', 'nl')
         #handler([cat_other], 'other_domain')
 
         # No translation is found, so the default is returned.

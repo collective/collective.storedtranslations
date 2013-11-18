@@ -6,7 +6,7 @@ from zope.interface import implements
 REGISTRY_BASE = 'collective.storedtranslations.translationdomains'
 
 
-class RegistryCatalog(object):
+class StoredCatalog(object):
     implements(IGlobalMessageCatalog)
 
     def __init__(self, domain, language):
