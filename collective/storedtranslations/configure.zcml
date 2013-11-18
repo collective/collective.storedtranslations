@@ -1,11 +1,14 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="collective.storedtranslations">
 
   <five:registerPackage package="." initialize=".initialize" />
+  <!-- For the permissions -->
+  <include package="Products.CMFCore" />
 
   <genericsetup:registerProfile
       name="default"
@@ -22,5 +25,12 @@
       description="Testdata for the collective.storedtranslations package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-  
+
+  <browser:page
+      name="storedtranslations-controlpanel"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      permission="cmf.ManagePortal"
+      class=".controlpanel.ControlPanelView"
+      />
+
 </configure>
