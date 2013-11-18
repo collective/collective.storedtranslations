@@ -25,6 +25,7 @@ class UninstalledTestCase(unittest.TestCase):
     def test_qi(self):
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ['Manager'])
+        portal.portal_languages.setDefaultLanguage('nl')
         portal.prefs_install_products_form()
         portal.prefs_install_products_form()
 
@@ -35,13 +36,16 @@ class UninstalledTestCase(unittest.TestCase):
         # fine always.
         app = self.layer['app']
         portal = self.layer['portal']
+        portal.portal_languages.setDefaultLanguage('nl')
+        import transaction
+        transaction.commit()
         browser = Browser(app)
         browser.handleErrors = False
         portal_url = portal.absolute_url()
         browser.open(portal_url + '/login')
-        browser.getControl('Login Name').value = SITE_OWNER_NAME
-        browser.getControl('Password').value = SITE_OWNER_PASSWORD
-        browser.getControl('Log in').click()
+        browser.getControl(name='__ac_name').value = SITE_OWNER_NAME
+        browser.getControl(name='__ac_password').value = SITE_OWNER_PASSWORD
+        browser.getControl(name='submit').click()
         browser.open(portal_url + '/prefs_install_products_form')
         browser.open(portal_url + '/prefs_install_products_form')
 
