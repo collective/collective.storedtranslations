@@ -33,22 +33,18 @@ class StoredCatalog(object):
         try:
             registry = getUtility(IRegistry)
         except ComponentLookupError:
-            print "no registry"
             return default
         try:
             enabled = registry[SETTINGS_IFACE + '.use_stored_translations']
         except KeyError:
-            print "no settings"
             return default
         if not enabled:
-            print "stored translations not enabled"
             return default
         # Note: there is no need to make a unicode of the Message when
         # querying the registry.
         try:
             msgstr = registry[REGISTRY_BASE][self.domain][self.language][msgid]
         except KeyError:
-            print "not found:", msgid
             return default
         return msgstr
 

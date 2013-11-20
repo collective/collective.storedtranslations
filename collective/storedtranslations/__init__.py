@@ -3,7 +3,7 @@ from zope.i18n.zcml import handler
 from zope.i18n.zcml import config
 from zope.i18nmessageid import MessageFactory
 from collective.storedtranslations.registrycatalog import StoredCatalog
-#from collective.storedtranslations.registrycatalog import UntranslatedCatalog
+from collective.storedtranslations.registrycatalog import UntranslatedCatalog
 
 _ = MessageFactory('collective.storedtranslations')
 LANGUAGES = config.ALLOWED_LANGUAGES
@@ -19,9 +19,8 @@ def register_catalogs(domains, languages):
     for domain in domains:
         for lang in languages:
             catalog1 = StoredCatalog(domain, lang)
-            #catalog2 = UntranslatedCatalog(domain, lang)
-            #handler([catalog1, catalog2], domain)
-            handler([catalog1], domain)
+            catalog2 = UntranslatedCatalog(domain, lang)
+            handler([catalog1, catalog2], domain)
 
 
 def initialize(context):
