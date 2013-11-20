@@ -1,5 +1,6 @@
 from plone.registry.interfaces import IRegistry
-from zope.component import queryUtility
+from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.i18n.interfaces import IGlobalMessageCatalog
 from zope.interface import implements
 
@@ -16,9 +17,22 @@ class StoredCatalog(object):
         self.language = language
 
     def queryMessage(self, msgid, default=None):
-        print "queryMessage", msgid
-        registry = queryUtility(IRegistry, None)
-        if registry is None:
+        # We need the registry.  This might not be available.  You
+        # would think the following is the correct way to handle this:
+        #
+        # registry = queryUtility(IRegistry, None)
+        #
+        # Unfortunately, this leads to a strange problem.  When you
+        # visit the Add-ons control panel in the Plone UI, all is
+        # fine.  When you visit it a second time, the IRegistry
+        # utility is gone, quickly leading to errors that break the
+        # main template.  A zope restart is then needed before you can
+        # view any page again.  The breakage seems to happen in
+        # plonetheme.sunburst and/or plone.app.collection, but don't
+        # take my word for that.  [Maurits, on Plone 4.3.2.]
+        try:
+            registry = getUtility(IRegistry)
+        except ComponentLookupError:
             print "no registry"
             return default
         try:
@@ -51,8 +65,9 @@ class UntranslatedCatalog(StoredCatalog):
     identifier_base = 'collective.storedtranslations.untranslated'
 
     def queryMessage(self, msgid, default=None):
-        registry = queryUtility(IRegistry, None)
-        if registry is None:
+        try:
+            registry = getUtility(IRegistry)
+        except ComponentLookupError:
             return default
         try:
             enabled = registry[SETTINGS_IFACE].show_untranslated
