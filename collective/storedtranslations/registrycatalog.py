@@ -46,7 +46,7 @@ class StoredCatalog(object):
             msgstr = registry[REGISTRY_BASE][self.domain][self.language][msgid]
         except KeyError:
             return default
-        return msgstr
+        return msgstr or default
 
     getMessage = queryMessage
 
@@ -65,15 +65,43 @@ class UntranslatedCatalog(StoredCatalog):
             registry = getUtility(IRegistry)
         except ComponentLookupError:
             return default
-        try:
-            enabled = registry[SETTINGS_IFACE].show_untranslated
-        except KeyError:
-            return default
-        if not enabled:
-            return default
         # Note: msgid may be a unicode or an instance of
         # zope.i18nmessageid.message.Message.  In the last case it may
         # have its own default.
         default = getattr(msgid, 'default', default)
-        # TODO: auto add msgid to the registry with an empty translation?
+        # We could use
+        # registry.forInterface(IStoredTranslationsSettings), but this
+        # currently leads to circular imports.  The following way is
+        # fine too.
+        try:
+            store = registry[SETTINGS_IFACE + '.store_untranslated']
+        except KeyError:
+            store = False
+        if store:
+            # Add msgid to the registry with the default translation
+            # or the original msgid.  Note that we should not store
+            # None because that is a wrong value_type.  Storing an
+            # empty string is also bad, because then you will not see
+            # anything.
+            try:
+                translationdomains = registry[REGISTRY_BASE]
+            except KeyError:
+                # Probably not installed.
+                pass
+            else:
+                # XXX self.language seems to be always English, which is weird.
+                if self.domain not in translationdomains:
+                    translationdomains[self.domain] = {}
+                domain = translationdomains[self.domain]
+                if self.language not in domain:
+                    domain[self.language] = {}
+                translationdomain = domain[self.language]
+                if msgid not in translationdomain:
+                    translationdomain[msgid] = default or u''
+        try:
+            show = registry[SETTINGS_IFACE + '.show_untranslated']
+        except KeyError:
+            show = False
+        if not show:
+            return default
         return u'[[{0}][{1}][[{2}]]'.format(self.domain, msgid, default)

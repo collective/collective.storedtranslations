@@ -15,11 +15,13 @@
         </key_type>
         <value_type type="plone.registry.field.Dict">
           <title i18n:translate="">Message</title>
+          <required>False</required>
           <key_type type="plone.registry.field.TextLine">
             <title i18n:translate="">Message ID</title>
           </key_type>
           <value_type type="plone.registry.field.TextLine">
             <title i18n:translate="">Message String</title>
+            <required>False</required>
           </value_type>
         </value_type>
       </value_type>
