@@ -108,12 +108,15 @@ class CatalogTestCase(unittest.TestCase):
         cat_de = StoredCatalog('plone', 'de')
         cat_fr = StoredCatalog('plone', 'fr')
         handler([cat_de, self.cat, cat_fr], 'plone')
-        # For some reason, if the next two lines are used, the
-        # IRegistry utility is not found in the registrycatalog.
-        # Seems to work fine in practice.  Weird.
-        #
-        #cat_other = StoredCatalog('other_domain', 'nl')
-        #handler([cat_other], 'other_domain')
+        # For some reason, if the next two lines are used AND you use
+        # queryUtility in the registrycatalog, the IRegistry utility
+        # is not found there.  Using a try/except around getUtility
+        # does work.  This is not just some corner case only
+        # encountered in the tests, but a real problem.  So if these
+        # tests start failing, you should not fix the tests, but fix
+        # the code.  Just a friendly warning. :-)
+        cat_other = StoredCatalog('other_domain', 'nl')
+        handler([cat_other], 'other_domain')
 
         # No translation is found, so the default is returned.
         self.assertEqual(
@@ -140,12 +143,9 @@ class CatalogTestCase(unittest.TestCase):
         self.assertEqual(
             translate('Hello world', 'plone', target_language='fr'),
             u'Allô monde')
-        # If adding the registry catalog for the other domain is done
-        # without bad side effects, the translate call should work,
-        # but for the moment it returns the default.
         self.assertEqual(
             translate('Hello world', 'other_domain', target_language='nl'),
-            'Hello world')
+            'Hallo andere wereld')
 
 
 class ExtraIntegrationTestCase(unittest.TestCase):
