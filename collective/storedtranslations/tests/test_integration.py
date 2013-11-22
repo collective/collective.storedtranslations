@@ -37,8 +37,6 @@ class UninstalledTestCase(unittest.TestCase):
         app = self.layer['app']
         portal = self.layer['portal']
         portal.portal_languages.setDefaultLanguage('nl')
-        import transaction
-        transaction.commit()
         browser = Browser(app)
         browser.handleErrors = False
         portal_url = portal.absolute_url()
