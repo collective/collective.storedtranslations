@@ -23,21 +23,42 @@
     <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message
     </div>
-    
 
-    
     <div id="content-core">
-      <a tal:attributes="href string:${portal_url}/portal_registry/edit/collective.storedtranslations.translationdomains"
-         i18n:translate="">Update the stored translations</a>
 
-        <span tal:content="view/form/domain|nothing" />
-        <span tal:content="view/form/language|nothing" />
+      <span tal:content="view/form/domain|nothing" />
+      <span tal:content="view/form/language|nothing" />
 
-        <div id="layout-contents">
-            <span tal:replace="structure view/contents" />
-        </div>
+      <div id="layout-contents">
+        <span tal:replace="structure view/contents" />
+      </div>
+
+      <tal:domain_list tal:condition="not:view/form/domain|nothing">
+
+        <h2 i18n:translate="">Domains and languages</h2>
+        <p i18n:translate="msg_known_domains_languages">We know these
+        domains and languages. Click the links to go to the form for a
+        combination of domain and language.
+        </p>
+        <div tal:repeat="domain view/form/domains|nothing">
+          <h3 tal:content="domain" />
+          <ul>
+            <li tal:repeat="language view/form/languages">
+              <a href="#"
+                 tal:attributes="href string:${portal_url}/storedtranslations-messages?domain=${domain}&amp;language=${language}"
+                 tal:content="language" />
+            </li>
+        </ul>
+      </div>
+        <p>
+          <a tal:attributes="href string:${portal_url}/portal_registry/edit/collective.storedtranslations.translationdomains"
+             i18n:translate="">Update all stored translations</a>
+        </p>
+
+      </tal:domain_list>
+
     </div>
-    
+
 </div>
 </body>
 </html>

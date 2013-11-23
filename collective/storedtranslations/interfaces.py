@@ -28,4 +28,5 @@ class ITranslationDomain(Interface):
     messages = schema.Dict(
         title=_(u'Messages'),
         key_type=schema.TextLine(title=u'Message ID'),
-        value_type=schema.TextLine(title=u'Message String'))
+        value_type=schema.TextLine(title=u'Message String',
+                                   required=False))
