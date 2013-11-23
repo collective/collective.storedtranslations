@@ -33,4 +33,11 @@
       class=".controlpanel.ControlPanelView"
       />
 
+  <browser:page
+      name="storedtranslations-messages"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      permission="cmf.ManagePortal"
+      class=".controlpanel.TranslationDomainEdit"
+      />
+
 </configure>
