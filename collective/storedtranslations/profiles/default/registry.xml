@@ -5,12 +5,12 @@
   <record name="collective.storedtranslations.translationdomains">
     <field type="plone.registry.field.Dict">
       <title i18n:translate="">Translation domains</title>
-      <key_type type="plone.registry.field.TextLine">
+      <key_type type="plone.registry.field.ASCIILine">
         <title i18n:translate="">Domain</title>
       </key_type>
       <value_type type="plone.registry.field.Dict">
         <title i18n:translate="">Language</title>
-        <key_type type="plone.registry.field.TextLine">
+        <key_type type="plone.registry.field.ASCIILine">
           <title i18n:translate="">Language Code</title>
         </key_type>
         <value_type type="plone.registry.field.Dict">

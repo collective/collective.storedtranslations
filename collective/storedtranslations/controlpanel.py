@@ -103,7 +103,19 @@ class TranslationDomainEditForm(form.EditForm):
         domain = data['domain']
         language = data['language']
         messages = data['messages']
-        registry[REGISTRY_BASE][domain][language] = messages
+        record = registry[REGISTRY_BASE]
+        # Create the translationdomain.
+        if domain not in record:
+            record[domain] = {}
+        domain_record = record[domain]
+        if language not in domain_record:
+            domain_record[language] = {}
+        # Store the messages.
+        domain_record[language] = messages
+        # Explicitly set the record.  If you only update the
+        # dictionaries, your changes will be lost after the next Plone
+        # restart.
+        registry[REGISTRY_BASE] = record
 
 TranslationDomainEdit = layout.wrap_form(TranslationDomainEditForm, ControlPanelFormWrapper)
 TranslationDomainEdit.label = _(u"Stored translation messages")
