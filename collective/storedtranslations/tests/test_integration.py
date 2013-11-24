@@ -73,7 +73,7 @@ class CatalogTestCase(unittest.TestCase):
         self.assertEqual(self.cat.getMessage('Hello world'), None)
         self.assertEqual(self.cat.getMessage('Hello world', 'foobar'), 'foobar')
         self.registry[REGISTRY_BASE] = \
-            {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
+            {'plone': {'nl': {u'Hello world': u'Hallo wereld'}}}
         self.assertEqual(self.cat.getMessage('Hello world'), 'Hallo wereld')
 
         # Try other language and domain.  This should not find the
@@ -87,7 +87,7 @@ class CatalogTestCase(unittest.TestCase):
         self.assertEqual(self.cat.queryMessage('Hello world'), None)
         self.assertEqual(self.cat.queryMessage('Hello world', 'foobar'), 'foobar')
         self.registry[REGISTRY_BASE] = \
-            {u'plone': {u'nl': {u'Hello world': u'Hallo wereld'}}}
+            {'plone': {'nl': {u'Hello world': u'Hallo wereld'}}}
         self.assertEqual(self.cat.queryMessage('Hello world'), 'Hallo wereld')
 
         # Try other language and domain.  This should not find the
@@ -125,14 +125,14 @@ class CatalogTestCase(unittest.TestCase):
 
         # Add translations.
         self.registry[REGISTRY_BASE] = \
-            {u'plone':
-                {u'de': {u'Hello world': u'Hallo Welt'},
-                 u'nl': {u'Hello moon': u'Hallo maan',
-                         u'Hello world': u'Hallo wereld',
-                         u'Goodbye world': u'Dag wereld'},
-                 u'fr': {u'Hello world': u'Allô monde'}},
-             u'other_domain':
-                {u'nl': {u'Hello world': u'Hallo andere wereld'}},
+            {'plone':
+                {'de': {u'Hello world': u'Hallo Welt'},
+                 'nl': {u'Hello moon': u'Hallo maan',
+                        u'Hello world': u'Hallo wereld',
+                        u'Goodbye world': u'Dag wereld'},
+                 'fr': {u'Hello world': u'Allô monde'}},
+             'other_domain':
+                {'nl': {u'Hello world': u'Hallo andere wereld'}},
              }
         self.assertEqual(
             translate('Hello world', 'plone', target_language='nl'),
