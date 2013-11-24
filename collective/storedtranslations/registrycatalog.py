@@ -89,7 +89,6 @@ class UntranslatedCatalog(StoredCatalog):
                 # Probably not installed.
                 pass
             else:
-                # XXX self.language seems to be always English, which is weird.
                 if self.domain not in translationdomains:
                     translationdomains[self.domain] = {}
                 domain = translationdomains[self.domain]

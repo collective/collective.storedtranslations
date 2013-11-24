@@ -6,12 +6,11 @@ from collective.storedtranslations import LANGUAGES
 from collective.storedtranslations.interfaces import IStoredTranslationsSettings
 from collective.storedtranslations.interfaces import ITranslationDomain
 from collective.storedtranslations.registrycatalog import REGISTRY_BASE
-from copy import deepcopy
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
 from z3c.form import form, button
-from z3c.form.interfaces import DISPLAY_MODE, HIDDEN_MODE
+from z3c.form.interfaces import HIDDEN_MODE
 from zope.component import getUtility
 
 
@@ -44,12 +43,12 @@ class TranslationDomainEditForm(form.EditForm):
     control_panel_view = u'storedtranslations-controlpanel'
 
     def update(self):
-        self.domain = self.request.get('form.widgets.domain', u'')
-        self.language = self.request.get('form.widgets.language', u'')
+        self.domain = self.request.get('form.widgets.domain', '')
+        self.language = self.request.get('form.widgets.language', '')
         if self.domain not in DOMAINS:
-            self.domain = u''
+            self.domain = ''
         if self.language not in LANGUAGES:
-            self.language = u''
+            self.language = ''
         super(TranslationDomainEditForm, self).update()
 
     def getContent(self):
@@ -57,7 +56,7 @@ class TranslationDomainEditForm(form.EditForm):
         try:
             content = registry[REGISTRY_BASE][self.domain][self.language]
         except KeyError:
-            # TODO create registry item?
+            # Registry item will get created when we save.
             content = {}
         return {u'messages': content}
 
@@ -100,8 +99,11 @@ class TranslationDomainEditForm(form.EditForm):
             self.control_panel_view))
 
     def applyChanges(self, data):
-        # TODO: this probably needs special handling.
-        super(TranslationDomainEditForm, self).applyChanges(data)
+        registry = getUtility(IRegistry)
+        domain = data['domain']
+        language = data['language']
+        messages = data['messages']
+        registry[REGISTRY_BASE][domain][language] = messages
 
 TranslationDomainEdit = layout.wrap_form(TranslationDomainEditForm, ControlPanelFormWrapper)
 TranslationDomainEdit.label = _(u"Stored translation messages")
