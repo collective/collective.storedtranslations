@@ -1,4 +1,6 @@
 from collective.storedtranslations import _
+from collective.storedtranslations import DOMAINS
+from collective.storedtranslations import LANGUAGES
 from zope import schema
 from zope.interface import Interface
 
@@ -25,8 +27,13 @@ class IStoredTranslationsSettings(Interface):
 
 class ITranslationDomain(Interface):
 
+    domain = schema.ASCIILine(title=_(u'Domain'))
+
+    language = schema.ASCIILine(title=_(u'Language'))
+
     messages = schema.Dict(
         title=_(u'Messages'),
         key_type=schema.TextLine(title=u'Message ID'),
         value_type=schema.TextLine(title=u'Message String',
-                                   required=False))
+                                   required=False),
+        required=False)

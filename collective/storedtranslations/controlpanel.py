@@ -6,11 +6,12 @@ from collective.storedtranslations import LANGUAGES
 from collective.storedtranslations.interfaces import IStoredTranslationsSettings
 from collective.storedtranslations.interfaces import ITranslationDomain
 from collective.storedtranslations.registrycatalog import REGISTRY_BASE
-#from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
+from copy import deepcopy
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
 from z3c.form import form, button
+from z3c.form.interfaces import DISPLAY_MODE, HIDDEN_MODE
 from zope.component import getUtility
 
 
@@ -43,12 +44,8 @@ class TranslationDomainEditForm(form.EditForm):
     control_panel_view = u'storedtranslations-controlpanel'
 
     def update(self):
-        # TODO: add these to the interface, readonly or hidden?  It is
-        # necessary to submit the domain and language when clicking
-        # 'Save', otherwise we have no idea where to save the
-        # messages.
-        self.domain = self.request.get('domain', u'')
-        self.language = self.request.get('language', u'')
+        self.domain = self.request.get('form.widgets.domain', u'')
+        self.language = self.request.get('form.widgets.language', u'')
         if self.domain not in DOMAINS:
             self.domain = u''
         if self.language not in LANGUAGES:
@@ -60,8 +57,16 @@ class TranslationDomainEditForm(form.EditForm):
         try:
             content = registry[REGISTRY_BASE][self.domain][self.language]
         except KeyError:
+            # TODO create registry item?
             content = {}
         return {u'messages': content}
+
+    def updateWidgets(self, prefix=None):
+        super(TranslationDomainEditForm, self).updateWidgets(prefix)
+        # Domain and language should be unchangeable and should be in
+        # the data that gets posted.
+        self.widgets['domain'].mode = HIDDEN_MODE
+        self.widgets['language'].mode = HIDDEN_MODE
 
     def updateActions(self):
         super(TranslationDomainEditForm, self).updateActions()
@@ -81,7 +86,9 @@ class TranslationDomainEditForm(form.EditForm):
         IStatusMessage(self.request).addStatusMessage(
             _(u"Changes saved."),
             "info")
-        self.request.response.redirect(self.request.getURL())
+        self.request.response.redirect("%s/%s" % (
+            self.context.absolute_url(),
+            self.control_panel_view))
 
     @button.buttonAndHandler(_(u"Cancel"), name='cancel')
     def handleCancel(self, action):
@@ -98,3 +105,4 @@ class TranslationDomainEditForm(form.EditForm):
 
 TranslationDomainEdit = layout.wrap_form(TranslationDomainEditForm, ControlPanelFormWrapper)
 TranslationDomainEdit.label = _(u"Stored translation messages")
+TranslationDomainEdit.index = ViewPageTemplateFile('controlpanel_messages.pt')

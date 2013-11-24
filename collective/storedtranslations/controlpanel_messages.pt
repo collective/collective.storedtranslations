@@ -26,29 +26,14 @@
 
     <div id="content-core">
 
+      <p i18n:translate="msg_domain_language">
+        You are translating the <code i18n:name="domain" tal:content="view/form_instance/domain">plone</code>
+        domain into the <code i18n:name="language" tal:content="view/form_instance/language">nl</code> language.
+      </p>
+
       <div id="layout-contents">
         <span tal:replace="structure view/contents" />
       </div>
-
-        <h2 i18n:translate="">Domains and languages</h2>
-        <p i18n:translate="msg_known_domains_languages">We know these
-        domains and languages. Click the links to go to the form for a
-        combination of domain and language.
-        </p>
-        <div tal:repeat="domain view/form/domains|nothing">
-          <h3 tal:content="domain" />
-          <ul>
-            <li tal:repeat="language view/form/languages">
-              <a href="#"
-                 tal:attributes="href string:${portal_url}/storedtranslations-messages?form.widgets.domain=${domain}&amp;form.widgets.language=${language}"
-                 tal:content="language" />
-            </li>
-        </ul>
-      </div>
-        <p>
-          <a tal:attributes="href string:${portal_url}/portal_registry/edit/collective.storedtranslations.translationdomains"
-             i18n:translate="">Update all stored translations</a>
-        </p>
 
     </div>
 
