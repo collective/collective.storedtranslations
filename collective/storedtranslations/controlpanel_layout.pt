@@ -38,10 +38,10 @@
         <div tal:repeat="domain view/form/domains|nothing">
           <h3 tal:content="domain" />
           <ul>
-            <li tal:repeat="language view/form/languages">
+            <li tal:repeat="language view/languages_for_display">
               <a href="#"
-                 tal:attributes="href string:${portal_url}/storedtranslations-messages?form.widgets.domain=${domain}&amp;form.widgets.language=${language}"
-                 tal:content="language" />
+                 tal:attributes="href string:${portal_url}/storedtranslations-messages?form.widgets.domain=${domain}&amp;form.widgets.language=${language/code}"
+                 tal:content="language/name" />
             </li>
         </ul>
       </div>

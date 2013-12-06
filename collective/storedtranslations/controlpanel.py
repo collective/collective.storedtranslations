@@ -15,7 +15,21 @@ from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
 from z3c.form import form, button
 from z3c.form.interfaces import HIDDEN_MODE
-from zope.component import getUtility
+from zope.component import getUtility, queryUtility
+from zope.schema.interfaces import IVocabularyFactory
+
+
+def get_language_name(context, language):
+    util = queryUtility(IVocabularyFactory,
+                        'plone.app.vocabularies.AvailableContentLanguages')
+    if util is None:
+        return language
+    vocab = util(context)
+    try:
+        language_name = vocab.getTerm(language).title
+    except LookupError:
+        language_name = language
+    return language_name
 
 
 class ControlPanelForm(RegistryEditForm):
@@ -31,6 +45,11 @@ class ControlPanelFormWrapper(layout.FormWrapper):
     """
 
     index = ViewPageTemplateFile('controlpanel_layout.pt')
+
+    def languages_for_display(self):
+        for language in self.form.languages:
+            yield {'code': language,
+                   'name': get_language_name(self.context, language)}
 
 
 ControlPanelView = layout.wrap_form(ControlPanelForm, ControlPanelFormWrapper)
@@ -186,12 +205,14 @@ class TranslationExport(BrowserView):
         organization = self.context.Title()
         timestamp = time.strftime('%Y-%m-%d %H:%M%z')
         translator = u'{} <{}>'.format(name, email)
+        language_name = get_language_name(self.context, language)
         language_team = translator
         year = date.today().year
+
         info = dict(
             domain=domain,
             language=language,
-            language_name=language,  # TODO
+            language_name=language_name,
             language_team=language_team,
             organization=organization,
             package=domain,
