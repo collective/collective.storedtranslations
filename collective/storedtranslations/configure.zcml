@@ -40,4 +40,11 @@
       class=".controlpanel.TranslationDomainEdit"
       />
 
+  <browser:page
+      name="storedtranslations-export"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      permission="cmf.ManagePortal"
+      class=".controlpanel.TranslationExport"
+      />
+
 </configure>
