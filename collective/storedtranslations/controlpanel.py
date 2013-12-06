@@ -1,13 +1,15 @@
+import time
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from StringIO import StringIO
-from collective.storedtranslations import _
 from collective.storedtranslations import DOMAINS
 from collective.storedtranslations import LANGUAGES
+from collective.storedtranslations import _
 from collective.storedtranslations.interfaces import IStoredTranslationsSettings
 from collective.storedtranslations.interfaces import ITranslationDomain
 from collective.storedtranslations.registrycatalog import REGISTRY_BASE
+from datetime import date
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.registry.interfaces import IRegistry
 from plone.z3cform import layout
@@ -141,24 +143,69 @@ TranslationDomainEdit = layout.wrap_form(TranslationDomainEditForm, ControlPanel
 TranslationDomainEdit.label = _(u"Stored translation messages")
 TranslationDomainEdit.index = ViewPageTemplateFile('controlpanel_messages.pt')
 
+pot_header = """\
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) %(year)s %(organization)s
+# %(translator)s, %(year)s.
+msgid ""
+msgstr ""
+"Project-Id-Version: %(package)s %(version)s\\n"
+"POT-Creation-Date: %(pot_time)s\\n"
+"PO-Revision-Date: %(po_time)s\\n"
+"Last-Translator: %(translator)s\\n"
+"Language-Team: %(language_team)s\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=utf-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+"Generated-By: collective.storedtranslations\\n"
+"Language-Code: %(language)s\\n"
+"Language-Name: %(language_name)s\\n"
+"Domain: %(domain)s\\n"
+
+"""
+
 
 class TranslationExport(BrowserView):
 
     def __call__(self):
-        self.domain = self.request.get('form.widgets.domain', '')
-        self.language = self.request.get('form.widgets.language', '')
-        if self.domain not in DOMAINS:
-            self.domain = ''
-        if self.language not in LANGUAGES:
-            self.language = ''
+        domain = self.request.get('form.widgets.domain', '')
+        language = self.request.get('form.widgets.language', '')
+        if domain not in DOMAINS:
+            domain = ''
+        if language not in LANGUAGES:
+            language = ''
         response = self.request.response
-        filename = '{}-{}.po'.format(self.domain, self.language)
+        filename = '{}-{}.po'.format(domain, language)
         response.setHeader('Content-type', 'text/x-gettext-translation')
         response.setHeader('Content-disposition',
                            'attachment; filename=%s' % filename)
-        registry = getUtility(IRegistry)
-        translations = registry[REGISTRY_BASE][self.domain][self.language]
+        # Get headers for .po file.
+        name = self.context.getProperty('email_from_name') or u'FULL NAME'
+        email = self.context.getProperty('email_from_address') or \
+            u'EMAIL@ADDRESS'
+        organization = self.context.Title()
+        timestamp = time.strftime('%Y-%m-%d %H:%M%z')
+        translator = u'{} <{}>'.format(name, email)
+        language_team = translator
+        year = date.today().year
+        info = dict(
+            domain=domain,
+            language=language,
+            language_name=language,  # TODO
+            language_team=language_team,
+            organization=organization,
+            package=domain,
+            po_time=timestamp,
+            pot_time=timestamp,
+            translator=translator,
+            version='1.0',
+            year=year,
+            )
         out = StringIO()
+        out.write(pot_header % info)
+        # Get stored translations.
+        registry = getUtility(IRegistry)
+        translations = registry[REGISTRY_BASE][domain][language]
         for msgid, msgstr in translations.items():
             out.write('msgid "%s"\n' % msgid)
             # Avoid printing "None"
