@@ -33,7 +33,7 @@ definitions of these in environment variables::
 
 We expect that you use a buildout to configure your Plone Site.  You
 would need to add those environment variables to your buildout config
-then, something like this:
+then, something like this::
 
   [instance]
   environment-vars =
